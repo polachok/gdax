@@ -11,7 +11,7 @@ use hyper::{Client, Request, Body};
 use hyper::rt::Stream;
 use hyper_tls::HttpsConnector;
 use futures::{FutureExt, TryFutureExt};
-use futures::compat::{Future01CompatExt, TokioDefaultSpawn};
+use futures::compat::{Future01CompatExt};
 use futures::channel::oneshot;
 use futures::executor::block_on;
 
@@ -45,7 +45,7 @@ fn main() {
     let compat_future = future
                 .boxed()
                 .unit_error()
-                .compat(TokioDefaultSpawn);
+                .compat();
     tokio::run(compat_future);
 
     // do it sync
@@ -54,7 +54,7 @@ fn main() {
     let compat_future = future
                 .boxed()
                 .unit_error()
-                .compat(TokioDefaultSpawn);
+                .compat();
     tokio::run(compat_future);
     let result = block_on(rx).unwrap();
     println!("{}", result);
