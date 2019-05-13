@@ -1,4 +1,4 @@
-#![feature(futures_api, async_await, await_macro)]
+#![feature(async_await)]
 extern crate futures;
 extern crate hyper;
 extern crate hyper_tls;
@@ -21,21 +21,21 @@ async fn get_currencies(url: &str) -> Result<serde_json::Value, Box<Error>> {
             .build::<_, Body>(https);
     let req = Request::get(url)
                 .header("User-Agent", "hyper/0.12").body(Body::empty()).unwrap();
-    let resp = await!(client.request(req).compat())?;
-    let body = await!(resp.into_body().concat2().compat())?;
+    let resp = client.request(req).compat().await?;
+    let body = resp.into_body().concat2().compat().await?;
     let res: serde_json::Value = serde_json::from_slice(&body)?;
     Ok(res)
 }
 
 async fn get_and_print(url: &str) {
-    match await!(get_currencies(url)) {
+    match get_currencies(url).await {
         Ok(cur) => println!("{}", cur),
         Err(err) => println!("{:?}", err),
     }
 }
 
 async fn get_and_send(url: &str, chan: oneshot::Sender<serde_json::Value>) {
-    let res = await!(get_currencies(url)).unwrap();
+    let res = get_currencies(url).await.unwrap();
     chan.send(res).unwrap();
 }
 
