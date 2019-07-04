@@ -15,7 +15,7 @@ use futures::compat::{Future01CompatExt};
 use futures::channel::oneshot;
 use futures::executor::block_on;
 
-async fn get_currencies(url: &str) -> Result<serde_json::Value, Box<Error>> {
+async fn get_currencies(url: &str) -> Result<serde_json::Value, Box<dyn Error>> {
     let https = HttpsConnector::new(4).unwrap();
     let client = Client::builder()
             .build::<_, Body>(https);
